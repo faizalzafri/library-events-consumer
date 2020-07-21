@@ -12,6 +12,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.IntegerDeserializer
       value-serializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: library-event-listener-group
+  data:
+    mongodb:
+      uri: mongodb+srv://root:<password>@library-events.mbacn.gcp.mongodb.net/event-db
+      database: event-db
 #    listener:
 #      ack-mode: manual
 #      concurrency: 3
