@@ -12,9 +12,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.IntegerDeserializer
       value-serializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: library-event-listener-group
-    listener:
-      ack-mode: manual
-      concurrency: 3
+#    listener:
+#      ack-mode: manual
+#      concurrency: 3
 ---
 spring:
   profiles: dev
