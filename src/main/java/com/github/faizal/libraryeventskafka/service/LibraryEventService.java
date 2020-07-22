@@ -39,6 +39,8 @@ public class LibraryEventService {
     }
 
     private LibraryEvent convert(LibraryEventModel fromJson) {
+        if (StringUtils.isEmpty(fromJson.getLibraryEventId()))
+            return new LibraryEvent(null, fromJson.getLibraryEventType(), fromJson.getBook());
         ObjectId libraryEventId = new ObjectId(fromJson.getLibraryEventId());
         return new LibraryEvent(libraryEventId, fromJson.getLibraryEventType(), fromJson.getBook());
     }
