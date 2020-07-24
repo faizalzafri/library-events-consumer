@@ -30,6 +30,8 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
+
 }
 
 sourceSets {
