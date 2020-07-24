@@ -217,8 +217,8 @@ class LibraryEventsConsumerIntegrationTest {
         countDownLatch.await(3, TimeUnit.SECONDS);
 
         //then
-        verify(spyConsumer, times(1)).onMessage(isA(ConsumerRecord.class));
-        verify(spyService, times(1)).processLibraryEvent(isA(ConsumerRecord.class));
+        verify(spyConsumer, times(3)).onMessage(isA(ConsumerRecord.class));
+        verify(spyService, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
 
     }
 
