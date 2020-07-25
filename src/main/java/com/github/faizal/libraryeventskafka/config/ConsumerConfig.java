@@ -25,6 +25,18 @@ public class ConsumerConfig {
             log.info("Error {}. Data: {}",thrownException.getMessage(), data.value());
         });
         factory.setRetryTemplate(retryTemplate());
+        factory.setRecoveryCallback(context -> {
+            if(context.getLastThrowable().getCause() instanceof RecoverableDataAccessException){
+                log.info("Recovering ");
+            }else{
+                log.info("Not recovering ");
+//                context.setExhaustedOnly();
+                throw new RuntimeException(context.getLastThrowable().getMessage());
+            }
+//            return context;
+            return null;
+        });
+
         return factory;
     }
 
@@ -49,7 +61,7 @@ public class ConsumerConfig {
 
     private RetryPolicy exceptionWiseRetryPolicy() {
         HashMap<Class<? extends Throwable>, Boolean> map = new HashMap<>();
-        map.put(IllegalArgumentException.class, true);
+        map.put(IllegalArgumentException.class, false);
         map.put(RecoverableDataAccessException.class, true);
         SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy(3, map, true);
         return simpleRetryPolicy;
