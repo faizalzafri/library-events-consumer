@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,6 +27,10 @@ public class LibraryEventService {
 
         String value = consumerRecord.value();
         LibraryEvent libEvent = convert(GSON.fromJson(value, LibraryEventModel.class));
+
+        if(libEvent.getLibraryEventId().equals(new ObjectId("5f187e5e1526ae459748f9de"))){
+            throw new RecoverableDataAccessException("Retrying while exception");
+        }
 
         switch (libEvent.getLibraryEventType()) {
             case NEW:

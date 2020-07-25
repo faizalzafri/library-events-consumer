@@ -222,5 +222,36 @@ class LibraryEventsConsumerIntegrationTest {
 
     }
 
+    @Test
+    void consumerUpdateEvent_RetryPolicy() throws ExecutionException, InterruptedException {
+        //given
+        Book book = Book.builder()
+                .bookId(111)
+                .bookName("Learn Kafka With Me")
+                .bookAuthor("Faizal")
+                .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+                .libraryEventId(new ObjectId("5f187e5e1526ae459748f9de"))
+                .libraryEventType(LibraryEventType.UPDATE)
+                .book(book)
+                .build();
+
+        String value = new Gson().toJson(convert(libraryEvent));
+        template.sendDefault(libraryEvent.getLibraryEventId().toString(), value).get();
+
+        //when
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        countDownLatch.await(3, TimeUnit.SECONDS);
+
+        //then
+        verify(spyConsumer, times(3)).onMessage(isA(ConsumerRecord.class));
+        verify(spyService, times(3)).processLibraryEvent(isA(ConsumerRecord.class));
+
+        Optional<LibraryEvent> optUpdateLe = repository.findById(libraryEvent.getLibraryEventId());
+        assertFalse(optUpdateLe.isPresent()); //checks if lib event id present and valid
+
+    }
+
 
 }

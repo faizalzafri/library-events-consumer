@@ -3,12 +3,15 @@ package com.github.faizal.libraryeventskafka.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.RecoverableDataAccessException;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
+
+import java.util.HashMap;
 
 @Configuration
 @EnableKafka
@@ -41,6 +44,14 @@ public class ConsumerConfig {
     private RetryPolicy simpleRetryPolicy() {
         SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy();
         simpleRetryPolicy.setMaxAttempts(3);
+        return simpleRetryPolicy;
+    }
+
+    private RetryPolicy exceptionWiseRetryPolicy() {
+        HashMap<Class<? extends Throwable>, Boolean> map = new HashMap<>();
+        map.put(IllegalArgumentException.class, true);
+        map.put(RecoverableDataAccessException.class, true);
+        SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy(3, map, true);
         return simpleRetryPolicy;
     }
 }
